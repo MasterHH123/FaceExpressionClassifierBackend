@@ -83,9 +83,23 @@ func main(){
 			}
 			defer remoteModelFile.Close()
 
+			//resets file pointer before copying to avoid copying EOF content
+			_, err = pythonFile.Seek(0, 0)
+			if err != nil {
+				fmt.Printf("Failed to reset pythonFile pointer: %v\n", err)
+				return
+			}
+
 			_, err = io.Copy(remotePythonFile, pythonFile)
 			if err != nil {
 				fmt.Printf("Failed to upload python file: %v", err)
+				return
+			}
+
+			//resets file pointer before copying to avoid copying EOF content
+			_, err = modelFile.Seek(0, 0)
+			if err != nil {
+				fmt.Printf("Failed to reset pythonFile pointer: %v\n", err)
 				return
 			}
 
@@ -95,8 +109,8 @@ func main(){
 				return
 			}
 
-
 		client.Close()
+		fmt.Printf("Successfully uploaded files to %s\n", slave)
 	}
 
 	fmt.Println("Successfully uploaded files to all slaves!")
