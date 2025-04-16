@@ -34,7 +34,8 @@ func main(){
 	dockerfile_content := strings.TrimSpace(`
 		FROM golang:1.23.0
 		WORKDIR /app
-		COPY go.mod go.sum server.go ./
+		COPY server.go .
+		RUN go mod init backend
 		RUN go mod tidy
 
 		RUN CGO_ENABLED=0 GOOS=linux go build -o /server

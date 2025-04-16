@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	masterIP := "3.17.179.120:22:22"
+	masterIP := "3.17.179.120:22"
 	keyPath := "id_rsa"
 
 	localFilePath := "server.go"
