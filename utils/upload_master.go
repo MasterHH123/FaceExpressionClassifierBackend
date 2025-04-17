@@ -15,7 +15,7 @@ func main() {
 	keyPath := "id_rsa"
 
 	localFilePath := "../server.go"
-	remoteFilePath := "/home/ec2-user/server.go"       // Destination on the master node.
+	remoteFilePath := "/home/ec2-user/server.go"
 
 	key, err := ioutil.ReadFile(keyPath)
 	if err != nil {
