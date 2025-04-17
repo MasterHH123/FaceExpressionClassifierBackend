@@ -123,18 +123,28 @@ func predictHandler(c *gin.Context) {
 	slaveURL := getNextSlave() + "/predict"
 	fmt.Printf("Forwarding request to slave: %s\n", slaveURL)
 
-	reqBody, err := ioutil.ReadAll(c.Request.Body)
+	bodyBytes, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "could not read request body"})
 		return
 	}
 
-	resp, err := http.Post(slaveURL, c.ContentType(), bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest(http.MethodPost, slaveURL, bytes.NewReader(bodyBytes))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create request", "details": err.Error()})
+		return
+	}
+	//copy the Content-Type header with boundary to avoid Missing boundary in multipart error
+	req.Header.Set("Content-Type", c.GetHeader("Content-Type"))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "error forwarding request to slave", "details": err.Error()})
 		return
 	}
 	defer resp.Body.Close()
+
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -142,6 +152,7 @@ func predictHandler(c *gin.Context) {
 		return
 	}
 
+	//relays slave's response to the caller
 	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), respBody)
 }
 
@@ -149,7 +160,7 @@ func main(){
 	router := gin.Default()	
 
 	router.POST("/login", login)
-	router.POST("/api/predict", authenticateMiddleware, predictHandler)
+	router.POST("/predict", authenticateMiddleware, predictHandler)
 
 
 	router.Run(":8080")
