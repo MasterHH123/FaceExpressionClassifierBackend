@@ -96,7 +96,7 @@ func authenticateMiddleware(c *gin.Context){
 		return
 	}
 
-	fmt.Printf("Token verified successfully.")
+	fmt.Printf("Token verified successfully.\n")
 
 	//continues with next route handler
 	c.Next()
