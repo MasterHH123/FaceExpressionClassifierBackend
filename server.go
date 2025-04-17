@@ -1,14 +1,27 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"bytes"
+	"fmt"
+	"io"
 	"io/ioutil"
+	"mime/multipart"
+	"net/textproto"
+	"net/http"
+	"os"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+)
+
+const (
+	s3Bucket	= "terraform-bucket-horacio-feic"
+	keyPrefix	= "user-images"
+	listenPort	= ":8080"
 )
 
 type User struct {
@@ -103,6 +116,29 @@ func authenticateMiddleware(c *gin.Context){
 	
 }
 
+func awsSession() (*session.Session, error) {
+	region := os.Getenv("AWS_REGION")
+	if region == "" {
+		region = "us-east-2"
+	}
+	return session.NewSession(&aws.Config{Region: aws.String(region)})
+}
+
+func uploadToS3(f *os.File, objKey string) error {
+	sess, err := awsSession()
+	if err != nil {
+		fmt.Printf("error:", err.Error())
+	}
+	info, _ := f.Stat()
+	_, err = s3.New(sess).PutObject(&s3.PutObjectInput{
+		Bucket:			aws.String(s3Bucket),
+		Key:			aws.String(objKey),
+		Body:			f,
+		ContentLength:  aws.Int64(info.Size()),
+	})
+	return err
+}
+
 var slaveIPs = []string{
 	"http://3.17.110.160:8000",
 	"http://3.137.169.157:8000",
@@ -120,22 +156,61 @@ func getNextSlave() string {
 }
 
 func predictHandler(c *gin.Context) {
-	slaveURL := getNextSlave() + "/predict"
-	fmt.Printf("Forwarding request to slave: %s\n", slaveURL)
-
-	bodyBytes, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "could not read request body"})
+	
+	if err := c.Request.ParseMultipartForm(10 << 20); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "multipart parse error"})
 		return
 	}
 
-	req, err := http.NewRequest(http.MethodPost, slaveURL, bytes.NewReader(bodyBytes))
+	fh, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "field 'file' missing"})
+		return
+	}
+
+	src, _ := fh.Open()
+	defer src.Close()
+
+	tmp, _ := ioutil.TempFile("", "upload-*")
+	defer os.Remove(tmp.Name())
+	io.Copy(tmp, src)
+	tmp.Seek(0, 0)
+
+	objKey := fmt.Sprintf("%s/%d_%s", keyPrefix, time.Now().UnixNano(), fh.Filename)
+	if err := uploadToS3(tmp, objKey); err != nil {
+		fmt.Printf("S3 upload error: %v", err.Error())
+		return
+	}
+	tmp.Seek(0, 0)
+
+
+	var buf bytes.Buffer
+	mw := multipart.NewWriter(&buf)
+	ct := fh.Header.Get("Content-Type")
+
+	h := textproto.MIMEHeader{}
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "file", fh.Filename))
+	if ct == "" {
+		ct = "application-octet-stream"
+	}
+	h.Set("Content-Type", ct)
+
+	part, _ := mw.CreatePart(h)
+	io.Copy(part, tmp)
+
+	mw.Close()
+
+	slaveURL := getNextSlave() + "/predict"
+	fmt.Printf("Forwarding request to slave: %s\n", slaveURL)
+
+
+	req, err := http.NewRequest(http.MethodPost, slaveURL, &buf)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create request", "details": err.Error()})
 		return
 	}
 	//copy the Content-Type header with boundary to avoid Missing boundary in multipart error
-	req.Header.Set("Content-Type", c.GetHeader("Content-Type"))
+	req.Header.Set("Content-Type", mw.FormDataContentType())
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
