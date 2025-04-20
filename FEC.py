@@ -13,6 +13,32 @@ from PIL import Image
 import numpy as np
 import io
 
+class EnhancedNN(nn.Module):
+    def __init__(self):
+        super(EnhancedNN, self).__init__()
+        self.fc1 = nn.Linear(28 * 28, 256)  # Changed to 28x28 to match MNIST dimensions
+        self.bn1 = nn.BatchNorm1d(256)
+        self.dropout1 = nn.Dropout(0.3)
+        self.fc2 = nn.Linear(256, 128)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.dropout2 = nn.Dropout(0.3)
+        self.fc3 = nn.Linear(128, 64)
+        self.bn3 = nn.BatchNorm1d(64)
+        self.dropout3 = nn.Dropout(0.3)
+        self.fc4 = nn.Linear(64, 10)
+
+    def forward(self, x):
+        x = x.view(-1, 28 * 28)  # Flatten MNIST images to 28*28
+        x = torch.relu(self.bn1(self.fc1(x)))
+        x = self.dropout1(x)
+        x = torch.relu(self.bn2(self.fc2(x)))
+        x = self.dropout2(x)
+        x = torch.relu(self.bn3(self.fc3(x)))
+        x = self.dropout3(x)
+        x = self.fc4(x)
+        return x
+
+
 class FECPredictor:
     def __init__(self, model_path="best_gpu_tweak.pth"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
