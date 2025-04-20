@@ -2,6 +2,7 @@ kubernetesguide.txt
 id_rsa
 .terraform/
 .terraform.lock.hcl
+.env
 terraform.tfstate
 terraform.tfstate.backup
 
