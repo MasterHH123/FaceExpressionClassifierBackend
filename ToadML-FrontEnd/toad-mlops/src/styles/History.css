@@ -1,0 +1,31 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px;
+    border: 3px solid #ccc;
+}
+
+th {
+    padding: 10px;
+}
+
+td {
+    border: 1px solid #ccc;
+}
+
+img {
+    height: 80px;
+    width: 80px;
+    border: 1px solid #ccc;
+}
+
+.download-button {
+    padding: 12px 20px;
+    background-color:#49de3d; 
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+

@@ -1,0 +1,14 @@
+#inference img {
+    border-radius: 4px;
+  }
+  
+.send-img-button {
+    background-color: #0c3a9f;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 50px;
+  }
+  
