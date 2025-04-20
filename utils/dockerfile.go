@@ -41,8 +41,8 @@ func main(){
 	dockerfile_content := strings.TrimSpace(`
 		FROM pytorch/pytorch
 		WORKDIR /app
-		COPY mnist_train.py /app/mnist_train.py
-		COPY best_mnist_model.pth /app/best_mnist_model.pth
+		COPY FEC.py /app/FEC.py
+		COPY best_gpu_tweak.pth /app/best_gpu_tweak.pth
 
 		RUN pip install torch torchvision matplotlib tqdm fastapi uvicorn python-multipart pillow numpy 
 

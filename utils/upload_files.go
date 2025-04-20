@@ -41,14 +41,14 @@ func main(){
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
-	pythonFile, err := os.Open("../FastAPI/mnist_train.py")
+	pythonFile, err := os.Open("../FEC.py")
 	if err != nil {
 		fmt.Printf("Failed to open file %v", err)
 		return
 	}
 	defer pythonFile.Close()
 
-	modelFile, err := os.Open("../FastAPI/best_mnist_model.pth")
+	modelFile, err := os.Open("../best_gpu_tweak.pth")
 	if err != nil{
 		fmt.Printf("Failed to open file %v", err)
 		return
@@ -69,14 +69,14 @@ func main(){
 			defer sftpClient.Close()
 
 
-			remotePythonFile, err := sftpClient.Create("/home/ec2-user/mnist_train.py")
+			remotePythonFile, err := sftpClient.Create("/home/ec2-user/FEC.py")
 			if err != nil{
 				fmt.Printf("Failed to create remote file %v", err)
 				return
 			}
 			defer remotePythonFile.Close()
 
-			remoteModelFile, err := sftpClient.Create("/home/ec2-user/best_mnist_model.pth")
+			remoteModelFile, err := sftpClient.Create("/home/ec2-user/best_gpu_tweak.pth")
 			if err != nil {
 				fmt.Printf("Failed to create remote file %v", err)
 				return
