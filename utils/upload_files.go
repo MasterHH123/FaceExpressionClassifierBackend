@@ -99,16 +99,17 @@ func main(){
 			//resets file pointer before copying to avoid copying EOF content
 			_, err = modelFile.Seek(0, 0)
 			if err != nil {
-				fmt.Printf("Failed to reset pythonFile pointer: %v\n", err)
+				fmt.Printf("Failed to reset modelFile pointer: %v\n", err)
 				return
 			}
 
 			_, err = io.Copy(remoteModelFile, modelFile)
 			if err != nil {
-				fmt.Printf("Failed to upload python file: %v", err)
+				fmt.Printf("Failed to upload model file: %v", err)
 				return
 			}
 
+		sftpClient.Close()
 		client.Close()
 		fmt.Printf("Successfully uploaded files to %s\n", slave)
 	}

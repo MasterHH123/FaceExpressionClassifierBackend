@@ -44,9 +44,9 @@ func main(){
 		COPY FEC.py /app/FEC.py
 		COPY best_gpu_tweak.pth /app/best_gpu_tweak.pth
 
-		RUN pip install torch torchvision matplotlib tqdm fastapi uvicorn python-multipart pillow numpy 
+		RUN pip install torch torchvision fastapi uvicorn python-multipart pillow 
 
-		CMD ["uvicorn", "mnist_train:app", "--host", "0.0.0.0", "--port", "8000"]`)
+		CMD ["uvicorn", "FEC:app", "--host", "0.0.0.0", "--port", "8000"]`)
 
 	for _, slave := range slaveIPs{
 		client, err := ssh.Dial("tcp", slave, config)
