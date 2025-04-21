@@ -13,6 +13,7 @@ export default function Navbar({ user, setUser }) {
     return (
       <nav className="" id="navbar">
         <div className="navbar-left">
+          <button style={{backgroundColor: "white"}} className="logo-iteso" onClick={() => handleScroll("inference")}><img style={{width: "150px", backgroundColor: "white"}} src="/Logo-ITESO-Principal-SinFondo.png" alt="Logo"/></button>
           <button className="logo-button" onClick={() => handleScroll("inference")}><img src="/mushroom.webp" alt="Logo" className="navbar-logo" /></button>
           <button className="nav-button" onClick={() => handleScroll("inference")}>Inference</button>
           <button className="nav-button" onClick={() => handleScroll("history")}>History</button>
