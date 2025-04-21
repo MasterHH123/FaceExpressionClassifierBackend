@@ -128,7 +128,8 @@ func awsSession() (*session.Session, error) {
 func uploadToS3(f *os.File, objKey string) error {
 	sess, err := awsSession()
 	if err != nil {
-		fmt.Printf("error:", err.Error())
+		fmt.Printf("error: %s\n", err.Error())
+		
 	}
 	info, _ := f.Stat()
 	_, err = s3.New(sess).PutObject(&s3.PutObjectInput{
