@@ -14,8 +14,8 @@ export default function Navbar({ user, setUser }) {
       <nav className="" id="navbar">
         <div className="navbar-left">
           <button className="logo-button" onClick={() => handleScroll("inference")}><img src="/mushroom.webp" alt="Logo" className="navbar-logo" /></button>
-          <button className="nav-button" onClick={() => handleScroll("inference")}>Inferencia</button>
-          <button className="nav-button" onClick={() => handleScroll("history")}>Historial</button>
+          <button className="nav-button" onClick={() => handleScroll("inference")}>Inference</button>
+          <button className="nav-button" onClick={() => handleScroll("history")}>History</button>
           <button className="nav-button" onClick={() => handleScroll("about")}>About</button>
         </div>
         <div>

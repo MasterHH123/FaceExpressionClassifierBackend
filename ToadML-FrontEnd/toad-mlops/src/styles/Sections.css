@@ -1,9 +1,13 @@
 section {
     padding: 100px 24px 48px;
-    min-height: 20vh;
-    max-height: 80vh;
+    min-height: 50vh;
     text-align: center;
   }
+
+section h2 {
+  color: #0c3a9f;
+  margin-top: 20px;
+}
   
 section:nth-child(even) {
 background-color: blue;

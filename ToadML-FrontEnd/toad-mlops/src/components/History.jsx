@@ -16,16 +16,16 @@ export default function History({ history = [] }) {
   };
 
   return (
-    <section style={{ marginTop: "32px" }}>
-      <h2>Historial de Inferencias</h2>
+    <section id="history-section" style={{ marginTop: "16px" }}>
+      <h2>History</h2>
       <table>
         <thead>
           <tr>
-            <th>Imagen</th>
-            <th>Archivo</th>
-            <th>Resultado</th>
-            <th>Precisión</th>
-            <th>Descargar</th>
+            <th>Image</th>
+            <th>File</th>
+            <th>Result</th>
+            <th>Accutacy</th>
+            <th>Download</th>
           </tr>
         </thead>
         <tbody>
@@ -45,7 +45,7 @@ export default function History({ history = [] }) {
                   onClick={() => handleDownload(entry.img, entry.imgfile)}
                   
                 >
-                  Descargar
+                  Download 🔽
                 </button>
               </td>
             </tr>

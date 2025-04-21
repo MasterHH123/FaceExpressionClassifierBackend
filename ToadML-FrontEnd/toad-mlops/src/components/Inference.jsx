@@ -64,13 +64,13 @@ export default function Inference({ addInferenceToHistory }) {
 
   return (
     <section id="inference" style={{marginTop: "16px"}}>
-      <h2>Sección de Inferencia</h2>
-
-      <input type="file" accept="image/*" onChange={handleImageUpload} />
+      <h2>Inference</h2>
+      <input id="files" type="file" accept="image/*" onChange={handleImageUpload} />
       {previewUrl && (
         <div style={{ marginTop: "16px" }}>
           <img
             src={previewUrl}
+            id="preview-img"
             alt="preview"
             style={{ width: "400px", height: "auto", border: "1px solid #ccc" }}
           />
@@ -78,12 +78,12 @@ export default function Inference({ addInferenceToHistory }) {
       )}
 
       <button className="send-img-button" onClick={handleSubmit} style={{ marginTop: "16px", padding: "8px 16px" }}>
-        Enviar imagen 🖼️
+        Submit Image 🖼️
       </button>
 
       {result && (
         <div style={{ marginTop: "16px" }}>
-          <p><strong>Clase:</strong> {result.class}</p>
+          <p><strong>Class:</strong> {result.class}</p>
           <p><strong>Accuracy:</strong> {result.accuracy}%</p>
         </div>
       )}
