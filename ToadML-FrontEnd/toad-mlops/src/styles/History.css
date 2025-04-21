@@ -32,10 +32,10 @@ td img {
     cursor: pointer;
 }
 
-#history-section {
+.history-section {
     background-color: #0c3a9f;
 }
 
-#history-section h2 {
+.history-section h2 {
     color: white;
 }

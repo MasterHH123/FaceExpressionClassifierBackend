@@ -2,9 +2,9 @@ import "../styles/History.css"
 
 export default function History({ history = [] }) {
   if (!history || history.length === 0) {
-    return <section style={{ marginTop: "32px" }}>
-      <h2>Historial de Inferencias</h2>
-      <p>No hay inferencias registradas.</p>
+    return <section className="history-section" style={{ marginTop: "32px" }}>
+      <h2>History</h2>
+      <p style={{color: "white"}}>No recorded inferences.</p>
       </section>;
   }
 
@@ -16,7 +16,7 @@ export default function History({ history = [] }) {
   };
 
   return (
-    <section id="history-section" style={{ marginTop: "16px" }}>
+    <section className="history-section" style={{ marginTop: "16px" }}>
       <h2>History</h2>
       <table>
         <thead>
